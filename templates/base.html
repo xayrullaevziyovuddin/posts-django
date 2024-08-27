@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+
+<head>
+
+    <!-- Basic Page Needs -->
+    <meta charset="utf-8">
+    <title>{% block title %}Aviato{% endblock %}</title>
+
+    <!-- Mobile Specific Metas -->
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="description" content="E-commerce Template">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+    <meta name="author" content="Themefisher">
+
+    <!-- Favicon -->
+    <link rel="shortcut icon" type="image/x-icon" href="{% static 'images/favicon.png' %}" />
+
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="{% static 'plugins/themefisher-font/style.css' %}">
+    <link rel="stylesheet" href="{% static 'plugins/bootstrap/css/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{% static 'plugins/animate/animate.css' %}">
+    <link rel="stylesheet" href="{% static 'plugins/slick/slick.css' %}">
+    <link rel="stylesheet" href="{% static 'plugins/slick/slick-theme.css' %}">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link rel="stylesheet" href="{% static 'css/home.css' %}">
+</head>
+
+<body id="body">
+
+    <!-- Start Top Header Bar -->
+    <section class="top-header">
+        <!-- Content for header -->
+        {% block top_header %}
+        <div class="container">
+            <div class="row">
+                <div class="col-md-4 col-xs-12 col-sm-4">
+                    <div class="contact-number">
+                        <i class="tf-ion-ios-telephone"></i>
+                        <span>0129-12323-123123</span>
+                    </div>
+                </div>
+                <div class="col-md-4 col-xs-12 col-sm-4">
+                    <div class="logo text-center">
+                        <a href="">
+                            <!-- Replace logo here -->
+                            <svg width="135px" height="29px" viewBox="0 0 155 29" version="1.1"
+                                xmlns="http://www.w3.org/2000/svg">
+                                <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd"
+                                    font-size="40" font-family="AustinBold, Austin" font-weight="bold">
+                                    <g id="Group" transform="translate(-108.000000, -297.000000)" fill="#000000">
+                                        <text id="AVIATO">
+                                            <tspan x="108.94" y="325">AVIATO</tspan>
+                                        </text>
+                                    </g>
+                                </g>
+                            </svg>
+                        </a>
+                    </div>
+                </div>
+                <div class="col-md-4 col-xs-12 col-sm-4">
+                    <!-- Cart, Search, Languages -->
+                    <ul class="top-menu text-right list-inline">
+                        <!-- Cart -->
+                        <li class="dropdown cart-nav dropdown-slide">
+                            <a href="#!" class="dropdown-toggle" data-toggle="dropdown" data-hover="dropdown"><i
+                                    class="tf-ion-android-cart"></i>Cart</a>
+                            <!-- Dropdown for Cart -->
+                            <div class="dropdown-menu cart-dropdown">
+                                <!-- Dynamic Cart Items -->
+                                {% block cart_items %}
+                                <div class="media">
+                                    <a class="pull-left" href="#!">
+                                        <img class="media-object" src="{% static 'images/shop/cart/cart-1.jpg' %}"
+                                            alt="image" />
+                                    </a>
+                                    <div class="media-body">
+                                        <h4 class="media-heading"><a href="#!">Ladies Bag</a></h4>
+                                        <div class="cart-price">
+                                            <span>1 x</span>
+                                            <span>1250.00</span>
+                                        </div>
+                                        <h5><strong>$1200</strong></h5>
+                                    </div>
+                                    <a href="#!" class="remove"><i class="tf-ion-close"></i></a>
+                                </div>
+                                {% endblock %}
+                                <!-- Cart Summary -->
+                                <div class="cart-summary">
+                                    <span>Total</span>
+                                    <span class="total-price">$1799.00</span>
+                                </div>
+                                <ul class="text-center cart-buttons">
+                                    <li><a href="" class="btn btn-small">View Cart</a></li>
+                                    <li><a href="" class="btn btn-small btn-solid-border">Checkout</a></li>
+                                </ul>
+                            </div>
+                        </li>
+                        <!-- Search -->
+                        <li class="dropdown search dropdown-slide">
+
+                            <a href="#!" class="dropdown-toggle" data-toggle="dropdown" data-hover="dropdown"><i
+                                    class="tf-ion-ios-search-strong"></i> Search</a>
+                            <ul class="dropdown-menu search-dropdown">
+                                <li>
+                                    <form action="post"><input type="search" class="form-control"
+                                            placeholder="Search..."></form>
+                                </li>
+                            </ul>
+                        </li>
+                        <a href="{% url 'logout' %}" >LOGOUT</a>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        {% endblock %}
+    </section>
+
+    <!-- Main Menu Section -->
+    <section class="menu">
+        <nav class="navbar navigation">
+            <div class="container">
+                <div class="navbar-header">
+                    <h2 class="menu-title">Main Menu</h2>
+                    <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar"
+                        aria-expanded="false" aria-controls="navbar">
+                        <span class="sr-only">Toggle navigation</span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                </div>
+                <!-- Navbar Links -->
+                <div id="navbar" class="navbar-collapse collapse text-center">
+                    <ul class="nav navbar-nav">
+                        <!-- Menu items will be defined in child templates -->
+                        {% block menu_items %}
+                        <li class="dropdown"><a href="{% url 'index' %}">Home</a></li>
+                        <li class="dropdown dropdown-slide"><a href="">Shop</a></li>
+                        <li class="dropdown full-width dropdown-slide"><a href="#!">Pages</a></li>
+                        <li class="dropdown dropdown-slide"><a href="">Blog</a></li>
+                        <li class="dropdown dropdown-slide"><a href="#!">Elements</a></li>
+                        {% endblock %}
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </section>
+
+    <!-- Page Header Section -->
+    {% block page_header %}
+    <section class="page-header">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="content">
+                        <h1 class="page-name">Page Title</h1>
+                        <ol class="breadcrumb">
+                            <li><a href="{% url 'index' %}">Home</a></li>
+                            <li class="active">Page</li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    {% endblock %}
+
+    <!-- Main Content -->
+    <div class="page-wrapper">
+        <div class="container">
+            <div class="row">
+                <!-- Main Content will be injected here -->
+                {% block content %}{% endblock %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer section text-center">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12">
+                    <ul class="social-media">
+                        <li><a href="https://www.facebook.com/themefisher"><i class="tf-ion-social-facebook"></i></a>
+                        </li>
+                        <li><a href="https://www.instagram.com/themefisher"><i class="tf-ion-social-instagram"></i></a>
+                        </li>
+                        <li><a href="https://www.twitter.com/themefisher"><i class="tf-ion-social-twitter"></i></a></li>
+                        <li><a href="https://www.pinterest.com/themefisher/"><i class="tf-ion-social-pinterest"></i></a>
+                        </li>
+                    </ul>
+                    <ul class="footer-menu text-uppercase">
+                        <li><a href="">CONTACT</a></li>
+                        <li><a href="">SHOP</a></li>
+                        <li><a href="">Pricing</a></li>
+                        <li><a href="">PRIVACY POLICY</a></li>
+                    </ul>
+                    <p class="copyright-text">Copyright &copy;2021, Designed &amp; Developed by <a
+                            href="https://themefisher.com/">Themefisher</a></p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Essential Scripts -->
+    <script src="{% static 'plugins/jquery/dist/jquery.min.js' %}"></script>
+    <script src="{% static 'plugins/bootstrap/js/bootstrap.min.js' %}"></script>
+    <script src="{% static 'plugins/slick/slick.min.js' %}"></script>
+    <script src="{% static 'js/script.js' %}"></script>
+
+</body>
+
+</html>
