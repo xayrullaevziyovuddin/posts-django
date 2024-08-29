@@ -28,14 +28,14 @@
       <div class="post">
         {% for post in posts %}
         <div class="post-media post-thumb">
-          <a href="{% url 'post_detail' post.pk %}">
+          <a href="{% url 'post_detail' year=post.date.year month=post.date.month day=post.date.day slug=post.slug %}">
             {% if post.images.all %}
             <img loading="lazy" src="{{ post.images.all.0.image.url }}" alt="{{ post.title }}" class="img-fluid"
                  style="width:50%; object-fit: cover;">
             {% endif %}
           </a>
         </div>
-        <h2 class="post-title"><a href="">{{ post.title }}</a></h2>
+        <h2 class="post-title"><a href="{% url 'post_detail' year=post.date.year month=post.date.month day=post.date.day slug=post.slug %}">{{ post.title }}</a></h2>
         <div class="post-meta">
           <ul>
             <li>
@@ -50,13 +50,13 @@
             </li>
             {% endfor %}
             <li>
-              <a href="{% url 'post_detail' post.pk %}"><i class="tf-ion-chatbubbles"></i> {{ post.comments.count }} Comments</a>
+              <a href="{% url 'post_detail' year=post.date.year month=post.date.month day=post.date.day slug=post.slug %}"><i class="tf-ion-chatbubbles"></i> {{ post.comments.count }} Comments</a>
             </li>
           </ul>
         </div>
         <div class="post-content">
           <p>{{ post.body| truncatechars:80}}</p>
-          <a href="{% url 'post_detail' post.pk %}" class="btn btn-main">Continue Reading</a>
+          <a href="{% url 'post_detail' year=post.date.year month=post.date.month day=post.date.day slug=post.slug %}" class="btn btn-main">Continue Reading</a>
         </div>
         {% endfor %}
       </div>
@@ -102,12 +102,12 @@
         {% for post in latest_posts %}
         <div class="media">
             {% if post.images.all %}
-            <a class="pull-left" href="{% url 'post_detail' post.pk %}">
+            <a class="pull-left" href="{% url 'post_detail' year=post.date.year month=post.date.month day=post.date.day slug=post.slug %}">
                 <img class="media-object" loading="lazy" src="{{ post.images.all.0.image.url }}" alt="Image">
             </a>
             {% endif %}
             <div class="media-body">
-                <h4 class="media-heading"><a href="#!">{{ post.title }}</a></h4>
+                <h4 class="media-heading"><a href="{% url 'post_detail' year=post.date.year month=post.date.month day=post.date.day slug=post.slug %}">{{ post.title }}</a></h4>
                 <p>{{ post.body | truncatechars:20 }}</p>
             </div>
         </div>

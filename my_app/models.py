@@ -66,6 +66,8 @@ class Post(models.Model):
     # Поле status определяет текущий статус поста (черновик или опубликован)
     status = models.CharField(max_length=2, choices=Status.choices, default=Status.DRAFT)
 
+    slug = models.SlugField(unique=True, blank=True)
+
     # Мета-класс для изменения порядка сортировки постов (по дате, от новых к старым)
     class Meta:
         ordering = ['-date']
@@ -73,13 +75,29 @@ class Post(models.Model):
             models.Index(fields=['-date'])  # Создание индекса по полю date для ускорения поиска
         ]
 
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            self.slug = slugify(self.title)
+            # Ensure the slug is unique
+            original_slug = self.slug
+            count = 1
+            while Post.objects.filter(slug=self.slug).exists():
+                self.slug = f"{original_slug}-{count}"
+                count += 1
+        super().save(*args, **kwargs)
+
     # Метод __str__ возвращает строковое представление поста (заголовок поста)
     def __str__(self):
         return self.title
 
     # Метод get_absolute_url возвращает URL для просмотра деталей поста
     def get_absolute_url(self):
-        return reverse('post_detail', kwargs={'pk': self.pk})
+        return reverse('post_detail', kwargs={
+            'year': self.date.year,
+            'month': self.date.month,
+            'day': self.date.day,
+            'slug': self.slug
+        })
 
 
 # Определение модели Image, представляющей изображения, связанные с постами

@@ -1,11 +1,11 @@
 from django.urls import path, include
 from django.contrib.auth import views as auth_view
 from . import views
-
+from .views import PostDetailView
 
 urlpatterns = [
     path('', views.IndexView.as_view(), name='index'),
-    path('post/<int:pk>/', views.PostDetailView.as_view(), name='post_detail'),
+    path('post/<int:year>/<int:month>/<int:day>/<slug:slug>/', PostDetailView.as_view(), name='post_detail'),
     path('tag/<slug:slug>/', views.TaggedPostListView.as_view(), name='tagged_posts'),
     path('category/<slug:slug>/', views.CategoryPostListView.as_view(), name='category_posts'),
     path('signup/', views.user_signup, name='signup'),

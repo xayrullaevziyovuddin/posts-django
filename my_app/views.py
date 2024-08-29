@@ -79,6 +79,13 @@ class PostDetailView(DetailView):
     template_name = 'blog-post-detail.html'  # Шаблон, который будет использоваться для отображения данных.
     context_object_name = 'post'  # Имя контекста, которое будет передано в шаблон.
 
+    def get_object(self, queryset=None):
+        return Post.objects.get(
+            slug=self.kwargs['slug'],
+            date__year=self.kwargs['year'],
+            date__month=self.kwargs['month'],
+            date__day=self.kwargs['day'],
+        )
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)  # Получаем контекст с данными по умолчанию.
         context['tags'] = Tag.objects.all()  # Добавляем в контекст все теги.
