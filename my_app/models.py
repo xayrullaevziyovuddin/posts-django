@@ -3,7 +3,6 @@ from django.db import models
 from django.urls import reverse
 from taggit.managers import TaggableManager
 from django.template.defaultfilters import slugify
-from markdownx.models import MarkdownxField
 
 
 # Определение модели Category, представляющей категорию поста в блоге
@@ -43,7 +42,7 @@ class Post(models.Model):
     title = models.CharField(max_length=255)
 
     # Поле body хранит текст поста, используя MarkdownxField для поддержки разметки Markdown
-    body = MarkdownxField()
+    body = models.TextField()
 
     # Поле date автоматически устанавливает текущую дату и время при создании поста
     date = models.DateTimeField(auto_now_add=True)

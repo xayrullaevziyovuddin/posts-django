@@ -4,7 +4,11 @@ from django.contrib.auth.models import User
 from .models import Comment
 
 
-
+class SearchForm(forms.Form):
+    query = forms.CharField(
+        label='Search',
+        widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Search by title...'})
+    )
 class SharePostForm(forms.Form):
     post_id = forms.IntegerField(widget=forms.HiddenInput)
     email = forms.EmailField(widget=forms.EmailInput(attrs={

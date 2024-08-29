@@ -2,14 +2,18 @@
 from django.shortcuts import redirect, render, get_object_or_404
 from django.views.generic import ListView, DetailView
 from config import settings  # Импортируем настройки проекта для использования в отправке электронной почты.
-from .forms import LoginForm, SignupForm, CommentForm, SharePostForm  # Импортируем формы для регистрации, логина, комментариев и отправки поста.
+from .forms import LoginForm, SignupForm, CommentForm, \
+    SharePostForm, SearchForm  # Импортируем формы для регистрации, логина, комментариев и отправки поста.
 from .models import Post, Image, Category  # Импортируем модели Постов, Изображений и Категорий.
 from taggit.models import Tag  # Импортируем модель тегов.
 from django.contrib import messages  # Импортируем модуль сообщений для вывода уведомлений пользователю.
-from django.contrib.auth import authenticate, login, logout, views  # Импортируем функции аутентификации и управления сессиями пользователей.
+from django.contrib.auth import authenticate, login, logout, \
+    views  # Импортируем функции аутентификации и управления сессиями пользователей.
 from django.contrib.auth.models import User  # Импортируем модель пользователей.
-from django.contrib.auth.mixins import LoginRequiredMixin  # Импортируем миксин для ограничения доступа к страницам только авторизованным пользователям.
+from django.contrib.auth.mixins import \
+    LoginRequiredMixin  # Импортируем миксин для ограничения доступа к страницам только авторизованным пользователям.
 from django.core.mail import send_mail  # Импортируем функцию для отправки электронной почты.
+
 
 # Функция для отправки поста по электронной почте.
 def share_post(request):
@@ -19,7 +23,8 @@ def share_post(request):
         if form.is_valid():  # Проверяем, корректно ли заполнена форма.
             post_id = form.cleaned_data['post_id']  # Получаем ID поста из очищенных данных формы.
             recipient_email = form.cleaned_data['email']  # Получаем email получателя из очищенных данных формы.
-            post = get_object_or_404(Post, id=post_id)  # Получаем пост по его ID или возвращаем ошибку 404, если он не найден.
+            post = get_object_or_404(Post,
+                                     id=post_id)  # Получаем пост по его ID или возвращаем ошибку 404, если он не найден.
 
             # Формируем тему и сообщение для отправки по электронной почте.
             subject = f"Пост: {post.title}"
@@ -40,6 +45,7 @@ def share_post(request):
 
     return redirect('index')  # Если запрос не POST, перенаправляем на главную страницу.
 
+
 # Класс представления для отображения главной страницы блога с постами.
 class IndexView(LoginRequiredMixin, ListView):
     model = Post  # Указываем модель, с которой будет работать это представление (Посты).
@@ -47,15 +53,25 @@ class IndexView(LoginRequiredMixin, ListView):
     context_object_name = 'posts'  # Имя контекста, которое будет передано в шаблон.
     paginate_by = 3  # Количество постов на одной странице.
 
+    def get_queryset(self):
+        queryset = super().get_queryset()  # Получаем все посты
+        query = self.request.GET.get('query')  # Получаем параметр запроса
+
+        if query:
+            queryset = queryset.filter(title__icontains=query)  # Фильтруем по заголовку, если передан запрос
+
+        return queryset
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)  # Получаем контекст с данными по умолчанию.
         context['images'] = Image.objects.all()  # Добавляем в контекст все изображения.
         context['tags'] = Tag.objects.all()  # Добавляем в контекст все теги.
         context['categories'] = Category.objects.all()  # Добавляем в контекст все категории.
-
+        context['search_query'] = self.request.GET.get('query', '')
         context['latest_posts'] = Post.objects.order_by('-date')[:3]  # Добавляем в контекст три последних поста.
 
         return context  # Возвращаем обновленный контекст.
+
 
 # Класс представления для отображения подробностей конкретного поста.
 class PostDetailView(DetailView):
@@ -70,6 +86,7 @@ class PostDetailView(DetailView):
         context['images'] = Image.objects.all()  # Добавляем в контекст все изображения.
         context['latest_posts'] = Post.objects.order_by('-date')[:3]  # Добавляем в контекст три последних поста.
         context['comment_form'] = CommentForm()  # Добавляем в контекст форму для комментариев.
+
         context['comments'] = self.object.comments.all()  # Добавляем в контекст все комментарии к данному посту.
         return context  # Возвращаем обновленный контекст.
 
@@ -79,7 +96,8 @@ class PostDetailView(DetailView):
         comment_form = CommentForm(request.POST)  # Получаем данные из формы комментария.
 
         if comment_form.is_valid():  # Проверяем, корректно ли заполнена форма.
-            comment = comment_form.save(commit=False)  # Создаем объект комментария, но пока не сохраняем его в базе данных.
+            comment = comment_form.save(
+                commit=False)  # Создаем объект комментария, но пока не сохраняем его в базе данных.
             comment.post = self.object  # Привязываем комментарий к текущему посту.
             comment.user = request.user  # Привязываем комментарий к текущему пользователю.
             comment.save()  # Сохраняем комментарий в базе данных.
@@ -90,6 +108,7 @@ class PostDetailView(DetailView):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)  # Инициализация объекта представления.
+
 
 # Класс представления для отображения постов, которые имеют определенный тег.
 class TaggedPostListView(ListView):
@@ -108,6 +127,7 @@ class TaggedPostListView(ListView):
         context['categories'] = Category.objects.all()  # Добавляем в контекст все категории.
         return context  # Возвращаем обновленный контекст.
 
+
 # Класс представления для отображения постов, которые относятся к определенной категории.
 class CategoryPostListView(ListView):
     model = Post  # Указываем модель, с которой будет работать это представление (Посты).
@@ -124,6 +144,7 @@ class CategoryPostListView(ListView):
         context['tags'] = Tag.objects.all()  # Добавляем в контекст все теги.
         context['categories'] = Category.objects.all()  # Добавляем в контекст все категории.
         return context  # Возвращаем обновленный контекст.
+
 
 # Функция для регистрации нового пользователя.
 def user_signup(request):
@@ -142,42 +163,43 @@ def user_signup(request):
     return render(request, 'accounts/signup.html', {'form': form})  # Отображаем страницу регистрации с формой.
 
     # Функция для входа пользователя в систему.
+
+
 def user_login(request):
-        if request.method == 'POST':  # Проверяем, является ли запрос POST (отправка данных формы).
-            form = LoginForm(request.POST)  # Получаем данные из формы входа.
-            if form.is_valid():  # Проверяем, корректно ли заполнена форма.
-                username = form.cleaned_data['username']  # Получаем введенное имя пользователя или email.
-                password = form.cleaned_data['password']  # Получаем введенный пароль.
+    if request.method == 'POST':  # Проверяем, является ли запрос POST (отправка данных формы).
+        form = LoginForm(request.POST)  # Получаем данные из формы входа.
+        if form.is_valid():  # Проверяем, корректно ли заполнена форма.
+            username = form.cleaned_data['username']  # Получаем введенное имя пользователя или email.
+            password = form.cleaned_data['password']  # Получаем введенный пароль.
 
-                try:
-                    user_exists = User.objects.get(username=username)  # Пытаемся найти пользователя по имени.
-                except User.DoesNotExist:
-                    user_exists = User.objects.filter(email=username).first()  # Если не найден, ищем по email.
+            try:
+                user_exists = User.objects.get(username=username)  # Пытаемся найти пользователя по имени.
+            except User.DoesNotExist:
+                user_exists = User.objects.filter(email=username).first()  # Если не найден, ищем по email.
 
-                if user_exists:
-                    user = authenticate(request, username=user_exists.username,
-                                        password=password)  # Аутентифицируем пользователя.
-                    if user:
-                        login(request, user)  # Входим в систему, если аутентификация успешна.
-                        return redirect('index')  # Перенаправляем на главную страницу.
-                    else:
-                        messages.error(request,
-                                       'Неправильный пароль.')  # Если пароль неверный, выводим сообщение об ошибке.
+            if user_exists:
+                user = authenticate(request, username=user_exists.username,
+                                    password=password)  # Аутентифицируем пользователя.
+                if user:
+                    login(request, user)  # Входим в систему, если аутентификация успешна.
+                    return redirect('index')  # Перенаправляем на главную страницу.
                 else:
                     messages.error(request,
-                                   'Пользователь с таким именем или email не найден.')  # Если пользователь не найден, выводим сообщение.
+                                   'Неправильный пароль.')  # Если пароль неверный, выводим сообщение об ошибке.
             else:
                 messages.error(request,
-                               'Ошибка в заполнении формы.')  # Если форма невалидна, выводим сообщение об ошибке.
-
+                               'Пользователь с таким именем или email не найден.')  # Если пользователь не найден, выводим сообщение.
         else:
-            form = LoginForm()  # Если запрос не POST, создаем пустую форму для входа.
+            messages.error(request,
+                           'Ошибка в заполнении формы.')  # Если форма невалидна, выводим сообщение об ошибке.
 
-        return render(request, 'accounts/login.html', {'form': form})  # Отображаем страницу входа с формой.
+    else:
+        form = LoginForm()  # Если запрос не POST, создаем пустую форму для входа.
+
+    return render(request, 'accounts/login.html', {'form': form})  # Отображаем страницу входа с формой.
 
 
 def user_logout(request):
     logout(request)  # Выходим из системы, завершив сессию пользователя.
     messages.success(request, 'Вы успешно вышли из системы.')  # Выводим сообщение об успешном выходе.
     return redirect('login')  # Перенаправляем на страницу входа.
-

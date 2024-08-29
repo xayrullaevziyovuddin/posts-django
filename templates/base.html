@@ -104,8 +104,10 @@
                                     class="tf-ion-ios-search-strong"></i> Search</a>
                             <ul class="dropdown-menu search-dropdown">
                                 <li>
-                                    <form action="post"><input type="search" class="form-control"
-                                            placeholder="Search..."></form>
+                                  <form action="{% url 'index' %}" method="GET">
+        <input type="search" name="query" class="form-control" placeholder="Search...">
+        <button type="submit" class="btn btn-primary">Search</button>
+    </form>
                                 </li>
                             </ul>
                         </li>
